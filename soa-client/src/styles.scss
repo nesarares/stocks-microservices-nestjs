@@ -1,0 +1,49 @@
+@import './scss/ball-grid-pulse';
+
+:root {
+  --font-family: "Space Grotesk", sans-serif;
+  --background: #f5f5f5;
+  --text-color: #1e093a;
+
+  --accent-background: #481bc3;
+  --accent-background-hover: #5423db;
+  --accent-text-color: white;
+
+  --shadow: 0 5px 14px 0 #481bc3af;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background: var(--background);
+  line-height: 1.23;
+}
+
+button {
+  background: var(--accent-background);
+  color: var(--accent-text-color);
+  padding: 1rem 2rem;
+  border: none;
+  min-width: 10rem;
+  transition: all 150ms ease;
+  cursor: pointer;
+  font-weight: 500;
+  outline: none;
+
+  &:hover {
+    background: var(--accent-background-hover);
+  }
+
+  &:active {
+    box-shadow: var(--shadow);
+  }
+}
+
+.page-wrapper {
+  position: relative;
+  padding: 2rem;
+}

@@ -1,0 +1,11 @@
+<main class="page-wrapper">
+  <button (click)="auth.logout({ returnTo: document.location.origin })">
+    Log out
+  </button>
+  
+  <ul *ngIf="auth.user$ | async as user">
+    <li>{{ user.name }}</li>
+    <li>{{ user.email }}</li>
+  </ul>
+</main>
+
