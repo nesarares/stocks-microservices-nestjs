@@ -1,0 +1,61 @@
+:host {
+	position: relative;
+	display: block;
+	border: 3px solid var(--text-color);
+
+	&:hover {
+		.icon-button {
+			opacity: 1;
+		}
+	}
+}
+
+.chart {
+	height: 300px;
+	width: 100%;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 1rem;
+
+	div {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+h2 {
+	display: block;
+	margin: 0;
+	color: var(--accent-text-color);
+	background-color: var(--text-color);
+	padding: 0.5rem 1rem;
+	font-size: 1.5rem;
+}
+
+.current-price {
+	display: block;
+	color: var(--accent-background);
+	padding: 0.5rem 1rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+app-spinner {
+	position: absolute;
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+}
+
+.icon-button {
+	opacity: 0;
+	transition: all 200ms ease;
+}

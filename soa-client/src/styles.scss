@@ -1,15 +1,21 @@
 @import './scss/ball-grid-pulse';
+@import "~@ng-select/ng-select/themes/default.theme.css";
 
 :root {
   --font-family: "Space Grotesk", sans-serif;
   --background: #f5f5f5;
   --text-color: #1e093a;
 
+  --subtle-background: #e0e0e0;
+  --subtle-background-hover: #d8d8d8;
+
   --accent-background: #481bc3;
+  --accent-background-transparent: #481bc34f;
   --accent-background-hover: #5423db;
   --accent-text-color: white;
 
   --shadow: 0 5px 14px 0 #481bc3af;
+  --shadow-subtle: 0 5px 14px 0 #c2c2c2af;
 }
 
 * {
@@ -40,6 +46,27 @@ button {
 
   &:active {
     box-shadow: var(--shadow);
+  }
+
+  &.icon-button {
+    min-width: unset;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--subtle-background);
+    color: var(--text-color);
+    line-height: 1;
+
+    &:hover {
+      background: var(--subtle-background-hover);
+    }
+
+    &:active {
+      box-shadow: var(--shadow-subtle);
+    }
   }
 }
 

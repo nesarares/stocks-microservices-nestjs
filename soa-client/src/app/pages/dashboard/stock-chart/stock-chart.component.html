@@ -1,0 +1,11 @@
+<div class="header">
+	<div>
+		<h2>{{ stock }}</h2>
+		<button class="icon-button" (click)="remove.emit()">❌</button>
+	</div>
+	<span class="current-price" *ngIf="currentPrice">{{ currentPrice | currency:'USD' }}</span>
+</div>
+
+<app-spinner *ngIf="isLoading"></app-spinner>
+
+<div id="{{ stock }}" class="chart"></div>

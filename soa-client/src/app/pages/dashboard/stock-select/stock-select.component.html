@@ -1,0 +1,3 @@
+<label for="stockSelect">Select graphs</label>
+<ng-select [(ngModel)]="selected" (ngModelChange)="selectedChange.emit(selected)" [items]="all" [multiple]="true" id="stockSelect">
+</ng-select>

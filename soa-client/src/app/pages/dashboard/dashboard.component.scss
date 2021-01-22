@@ -1,0 +1,27 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+
+  h1 {
+    margin: 0;
+    font-size: 3rem;
+  }
+}
+
+app-stock-select {
+  display: block;
+  margin: 1rem 0 2rem;
+}
+
+.graphs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+	.graphs {
+		grid-template-columns: 1fr;
+	}
+}

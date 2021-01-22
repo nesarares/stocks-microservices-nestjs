@@ -1,11 +1,16 @@
 <main class="page-wrapper">
-  <button (click)="auth.logout({ returnTo: document.location.origin })">
-    Log out
-  </button>
-  
-  <ul *ngIf="auth.user$ | async as user">
-    <li>{{ user.name }}</li>
-    <li>{{ user.email }}</li>
-  </ul>
-</main>
+  <header>
+    <h1>Dashboard</h1>
 
+    <button (click)="logout()">
+      Log out
+    </button>
+  </header>
+
+  <app-stock-select [(selected)]="selectedStocks" (selectedChange)="save()"></app-stock-select>
+
+  <section class="graphs">
+    <app-stock-chart *ngFor="let stock of selectedStocks" [@slideInOut] [stock]="stock" (remove)="removeStock(stock)">
+    </app-stock-chart>
+  </section>
+</main>
