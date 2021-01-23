@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -7,27 +9,24 @@ import { Subject } from 'rxjs';
 export class StockService {
   subjects: { [stock: string]: Subject<number> } = {};
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  async getAvailableStocks() {
-    return ['AAPL', 'DPZ', 'TWLO'];
+  async getAvailableStocks(): Promise<string[]> {
+    return this.http.get<string[]>(`api/stocks`).toPromise();
   }
 
   async getChartData(stock: string): Promise<{ date: Date; value: number }[]> {
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(null);
-      }, 2000)
-    );
-
-    const data = [];
-    let value = 50;
-    for (var i = 0; i < 300; i++) {
-      const date = new Date(new Date().getTime() - i * 5 * 1000);
-      value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-      data.push({ date: date, value: value });
-    }
-    return data.reverse();
+    return this.http
+      .get<{ date: Date; value: number }[]>(`api/stocks/${stock}`)
+      .pipe(
+        map((data) => {
+          return data.map((data) => ({
+            value: data.value,
+            date: new Date(data.date),
+          }));
+        })
+      )
+      .toPromise();
   }
 
   async subscribeToStock(stock: string) {
@@ -38,14 +37,7 @@ export class StockService {
     const stockSubject = new Subject<number>();
     this.subjects[stock] = stockSubject;
 
-    let interval = setInterval(() => {
-      if (!this.subjects[stock]) {
-        clearInterval(interval);
-        return;
-      }
-
-      stockSubject.next(Math.round(Math.random() * 200));
-    }, 5000);
+    // Subscribe to stock to API
 
     return stockSubject.asObservable();
   }
@@ -53,5 +45,7 @@ export class StockService {
   async unsubscribeFromStock(stock: string) {
     this.subjects[stock].complete();
     delete this.subjects[stock];
+
+    // Unsubscribe from stock to API
   }
 }

@@ -1,4 +1,4 @@
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,6 +14,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { StockSelectComponent } from './pages/dashboard/stock-select/stock-select.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
+import { UrlInterceptor } from './services/url.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +31,7 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     FormsModule,
     NgSelectModule,
+    HttpClientModule,
     AuthModule.forRoot({
       clientId: environment.auth0.clientId,
       domain: environment.auth0.domain,
@@ -40,6 +42,7 @@ import { FormsModule } from '@angular/forms';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: UrlInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })
