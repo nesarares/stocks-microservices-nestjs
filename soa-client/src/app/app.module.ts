@@ -35,8 +35,9 @@ import { UrlInterceptor } from './services/url.interceptor';
     AuthModule.forRoot({
       clientId: environment.auth0.clientId,
       domain: environment.auth0.domain,
+      audience: environment.apiBaseUrl,
       httpInterceptor: {
-        allowedList: ['/api/*'],
+        allowedList: ['api/*'],
       },
     }),
   ],
