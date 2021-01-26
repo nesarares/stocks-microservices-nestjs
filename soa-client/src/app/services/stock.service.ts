@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Utils } from '../utils/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,17 @@ export class StockService {
   constructor(private http: HttpClient) {}
 
   async getAvailableStocks() {
-    return this.http.get<{symbol: string, name: string}[]>(`api/stocks`).toPromise();
+    return this.http
+      .get<{ symbol: string; name: string }[]>(`api/stocks`)
+      .pipe(
+        map((result) => {
+          return result.map((stock) => ({
+            symbol: stock.symbol,
+            name: Utils.titleCase(stock.name),
+          }));
+        })
+      )
+      .toPromise();
   }
 
   async getChartData(stock: string): Promise<{ date: Date; value: number }[]> {
