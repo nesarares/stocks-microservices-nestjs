@@ -18,7 +18,7 @@ export class StockSelectComponent implements OnInit {
   @Input() selected: string[];
   @Output() selectedChange = new EventEmitter();
 
-  all: string[];
+  all: { symbol: string; name: string }[];
 
   constructor(private stockService: StockService) {}
 

@@ -1,3 +1,10 @@
 <label for="stockSelect">Select graphs</label>
-<ng-select [(ngModel)]="selected" (ngModelChange)="selectedChange.emit(selected)" [items]="all" [multiple]="true" id="stockSelect">
+<ng-select [(ngModel)]="selected" bindLabel="name" bindValue="symbol" (ngModelChange)="selectedChange.emit(selected)"
+	[items]="all" [multiple]="true" id="stockSelect" [closeOnSelect]="false">
+	<ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+		<div class="option">
+			<span class="symbol">{{ item.symbol }}</span>
+			<span class="name">{{ item.name }}</span>
+		</div>
+	</ng-template>
 </ng-select>

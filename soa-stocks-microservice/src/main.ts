@@ -14,6 +14,6 @@ async function bootstrap() {
       },
     },
   );
-  app.listen(() => console.log('Auth microservice is listening'));
+  app.listen(() => console.log('Stocks microservice is listening'));
 }
 bootstrap();

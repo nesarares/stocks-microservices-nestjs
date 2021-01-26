@@ -3,3 +3,20 @@ label {
 	font-weight: 500;
 	margin-bottom: 0.4rem; 
 }
+
+.option {
+	display: flex;
+	flex-direction: column;
+
+	.symbol {
+		font-weight: bold;
+		color: var(--text-color);
+		margin-bottom: 0;
+	}
+
+	.name {
+		color: var(--text-color-fade);
+		font-weight: 500;
+		font-size: 0.875rem;
+	}
+}

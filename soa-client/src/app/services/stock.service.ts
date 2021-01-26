@@ -11,18 +11,18 @@ export class StockService {
 
   constructor(private http: HttpClient) {}
 
-  async getAvailableStocks(): Promise<string[]> {
-    return this.http.get<string[]>(`api/stocks`).toPromise();
+  async getAvailableStocks() {
+    return this.http.get<{symbol: string, name: string}[]>(`api/stocks`).toPromise();
   }
 
   async getChartData(stock: string): Promise<{ date: Date; value: number }[]> {
     return this.http
-      .get<{ date: Date; value: number }[]>(`api/stocks/${stock}`)
+      .get<{ date: number; value: number }[]>(`api/stocks/${stock}`)
       .pipe(
         map((data) => {
           return data.map((data) => ({
             value: data.value,
-            date: new Date(data.date),
+            date: new Date(data.date * 1000),
           }));
         })
       )

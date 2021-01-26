@@ -1,21 +1,22 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
-import { StocksService } from './stocks.service';
+import { availableStocks } from './available-stocks';
 
 @Controller('stocks')
 @UseGuards(AuthGuard)
 export class StocksController {
-  constructor(private stocksService: StocksService) {}
+  constructor(@Inject('STOCKS_SERVICE') private stocksClient: ClientProxy) {}
 
   @Get()
   public async getAvailableStocks() {
-    return this.stocksService.getAvailableStocks();
+    return availableStocks;
   }
 
   @Get(':id')
-  public async getStockData(
-    @Param('id') stock: string,
-  ): Promise<{ date: Date; value: number }[]> {
-    return this.stocksService.getStockData(stock);
+  public async getStockData(@Param('id') stock: string): Promise<{ date: number; value: number }[]> {
+    const data = await this.stocksClient.send({ cmd: 'get' }, stock).toPromise();
+    console.log(data);
+    return data;
   }
 }
