@@ -27,12 +27,7 @@ export class AuthService {
     });
   }
 
-  public async verifyAuthorization(authorizationHeader: string) {
-    if (!authorizationHeader.startsWith('Bearer ')) {
-      return false;
-    }
-
-    const token = authorizationHeader.slice('Bearer '.length);
+  public async verifyAuthToken(token: string) {
     const decoded = jwt.decode(token, { complete: true }) as { [key: string]: any };
     const kid = decoded?.header?.kid;
 
@@ -43,5 +38,14 @@ export class AuthService {
     const key = await this.jwksClient.getSigningKeyAsync(kid);
     const signingKey = key.getPublicKey();
     return this.verifyToken(token, signingKey);
+  }
+
+  public async verifyAuthorization(authorizationHeader: string) {
+    if (!authorizationHeader.startsWith('Bearer ')) {
+      return false;
+    }
+
+    const token = authorizationHeader.slice('Bearer '.length);
+    return this.verifyAuthToken(token);
   }
 }

@@ -14,14 +14,17 @@ export class StockService {
 
   async loadData(stock: string) {
     const now = Math.floor(new Date().getTime() / 1000);
-    const lastDay = Math.floor(new Date(new Date().getTime() - 1000 * 60 * 60 * 24).getTime() / 1000);
+    // const lastDay = Math.floor(new Date(new Date().getTime() - 1000 * 60 * 60 * 24).getTime() / 1000);
+    const lastWeek = Math.floor(new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7).getTime() / 1000);
     const result = await this.http
       .get(`${finnhubBaseUrl}/stock/candle`, {
         headers: finnhubHeaders,
         params: {
           symbol: stock,
+          // resolution: '5',
           resolution: '5',
-          from: lastDay.toString(),
+          // from: lastDay.toString(),
+          from: lastWeek.toString(),
           to: now.toString(),
         },
       })

@@ -64,10 +64,10 @@ export class StockChartComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-
+    this.stockService.unsubscribeFromStock(this.stock);
     setTimeout(() => {
       this.chart.dispose();
-    }, 1000)
+    }, 1000);
   }
 
   async initData() {

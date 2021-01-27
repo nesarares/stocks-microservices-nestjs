@@ -16,7 +16,6 @@ export class StocksController {
   @Get(':id')
   public async getStockData(@Param('id') stock: string): Promise<{ date: number; value: number }[]> {
     const data = await this.stocksClient.send({ cmd: 'get' }, stock).toPromise();
-    console.log(data);
     return data;
   }
 }

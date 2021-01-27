@@ -12,4 +12,11 @@ export class AuthController {
     console.log(`Header is valid: ${valid}`);
     return valid;
   }
+  
+  @MessagePattern({ cmd: 'verify-token' })
+  async verifyToken(token: string): Promise<boolean> {
+    const valid = await this.authService.verifyAuthToken(token);
+    console.log(`Token is valid: ${valid}`);
+    return valid;
+  }
 }

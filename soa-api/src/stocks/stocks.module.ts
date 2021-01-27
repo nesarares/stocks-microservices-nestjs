@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { config } from 'src/config';
 import { SharedModule } from 'src/shared/shared.module';
 import { StocksController } from './stocks.controller';
+import { StocksGateway } from './stocks.gateway';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { StocksController } from './stocks.controller';
     ]),
   ],
   controllers: [StocksController],
-  providers: [],
+  providers: [StocksGateway],
 })
 export class StocksModule {}
