@@ -1,9 +1,14 @@
 <div class="header">
 	<div>
 		<h2>{{ stock }}</h2>
-		<button class="icon-button" (click)="remove.emit()">❌</button>
+		<button class="icon-button" (click)="remove.emit()"><i class="bi-x"></i></button>
 	</div>
-	<span class="current-price" *ngIf="currentPrice">{{ currentPrice | currency:'USD' }}</span>
+	<div *ngIf="currentPrice">
+		<span class="current-price">{{ currentPrice | currency:'USD':'symbol':'.3' }}</span>
+		<i class="bi-arrow-up-short up" *ngIf="currentPrice > lastPrice"></i>
+		<i class="bi-dash" *ngIf="currentPrice === lastPrice"></i>
+		<i class="bi-arrow-down-short down" *ngIf="currentPrice < lastPrice"></i>
+	</div>
 </div>
 
 <app-spinner *ngIf="isLoading"></app-spinner>

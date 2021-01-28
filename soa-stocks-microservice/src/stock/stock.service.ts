@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
-import { debounceTime, map, throttleTime } from 'rxjs/operators';
+import { map, throttleTime } from 'rxjs/operators';
 import { keys } from 'src/keys';
 import { RedisService } from 'src/redis/redis.service';
 import * as WebSocket from 'ws';
@@ -10,21 +10,25 @@ const finnhubHeaders = {
   'X-Finnhub-Token': keys.finnhubKey,
 };
 
+interface RedisEvent {
+  channel: string;
+  value: any;
+}
+
 @Injectable()
 export class StockService {
   ws: WebSocket;
   stockSubscriptions: { [key: string]: number } = {};
-  eventSubject = new Subject<{ channel: string; value: unknown }>();
+
+  stockEvents: { [key: string]: Subject<RedisEvent> } = {};
+  eventSubject = new Subject<RedisEvent>();
 
   constructor(private http: HttpService, private redisService: RedisService) {
     this.initFinnhubWs();
 
-    this.eventSubject
-      .asObservable()
-      .pipe(throttleTime(1000))
-      .subscribe(({ channel, value }) => {
-        this.redisService.publish(channel, value);
-      });
+    this.eventSubject.asObservable().subscribe(({ channel, value }) => {
+      this.redisService.publish(channel, value);
+    });
   }
 
   private async initFinnhubWs() {
@@ -46,6 +50,7 @@ export class StockService {
       if (obj.data) {
         const dta = obj.data;
         const prices: { [key: string]: number } = {};
+
         for (let i = dta.length - 1; i >= 0; i--) {
           const symbol = dta[i].s;
           if (!prices[symbol]) {
@@ -53,9 +58,21 @@ export class StockService {
           }
         }
 
-        this.eventSubject.next({
-          channel: 'stocks',
-          value: prices
+        Object.entries(prices).forEach(([stock, value]) => {
+          if (!this.stockEvents[stock]) {
+            this.stockEvents[stock] = new Subject();
+            this.stockEvents[stock]
+              .asObservable()
+              .pipe(throttleTime(1000))
+              .subscribe((event) => {
+                this.eventSubject.next(event);
+              });
+          }
+
+          this.stockEvents[stock].next({
+            channel: 'stocks',
+            value: { stock, value },
+          });
         });
       }
     });
@@ -113,8 +130,10 @@ export class StockService {
     if (this.stockSubscriptions[stock] == null) return;
     if (this.stockSubscriptions[stock] > 0) {
       this.stockSubscriptions[stock]--;
-      this.ws.send(JSON.stringify({ type: 'unsubscribe', symbol: stock }));
-      console.log(`Sent unsubscribe for ${stock}`);
+      if (this.stockSubscriptions[stock] === 0) {
+        console.log(`Sent unsubscribe for ${stock}`);
+        this.ws.send(JSON.stringify({ type: 'unsubscribe', symbol: stock }));
+      }
     }
   }
 }

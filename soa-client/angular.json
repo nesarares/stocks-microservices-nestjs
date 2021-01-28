@@ -31,7 +31,11 @@
               "node_modules/normalize.css/normalize.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "socket.io-client",
+              "@amcharts/amcharts4"
+            ]
           },
           "configurations": {
             "production": {

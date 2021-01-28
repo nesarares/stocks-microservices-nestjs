@@ -6,6 +6,10 @@
 	&:hover {
 		.icon-button {
 			opacity: 1;
+
+			i {
+				line-height: 0;
+			}
 		}
 	}
 }
@@ -38,9 +42,22 @@ h2 {
 .current-price {
 	display: block;
 	color: var(--accent-background);
-	padding: 0.5rem 1rem;
+	padding: 0.5rem 0.2rem 0.5rem 1rem;
 	font-size: 1.5rem;
 	font-weight: 700;
+
+	& + i {
+		font-size: 32px;
+		margin-right: 0.5rem;
+
+		&.up {
+			color: #319917;
+		}
+
+		&.down {
+			color: #da2828;
+		}
+	}
 }
 
 app-spinner {

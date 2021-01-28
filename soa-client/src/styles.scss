@@ -1,5 +1,6 @@
 @import './scss/ball-grid-pulse';
 @import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 
 :root {
   --font-family: "Space Grotesk", sans-serif;
@@ -74,4 +75,8 @@ button {
 .page-wrapper {
   position: relative;
   padding: 2rem;
+}
+
+i {
+  font-size: 26px;
 }

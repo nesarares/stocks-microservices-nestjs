@@ -13,6 +13,11 @@ import { config } from 'src/config';
 import { RedisService } from 'src/redis/redis.service';
 import { WsAuthGuard } from 'src/shared/guards/ws-auth.guard';
 
+interface RedisEvent {
+  stock: string;
+  value: number;
+}
+
 @WebSocketGateway(config.wsPort)
 export class StocksGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -21,19 +26,11 @@ export class StocksGateway implements OnGatewayConnection, OnGatewayDisconnect {
   stockSubscriptions: { [key: string]: Set<Socket> } = {};
 
   constructor(@Inject('STOCKS_SERVICE') private stocksClient: ClientProxy, private redisService: RedisService) {
-    this.redisService.fromEvent<{ [key: string]: number }>('stocks').subscribe(async (data) => {
-      await Promise.all(
-        Object.entries(data).map(async ([stock, value]) => {
-          const set = this.stockSubscriptions[stock];
-          if (set) {
-            await Promise.all(
-              Array.from(set).map((client) => {
-                client.emit('message', { stock, value });
-              }),
-            );
-          }
-        }),
-      );
+    this.redisService.fromEvent<RedisEvent>('stocks').subscribe(({ stock, value }) => {
+      const set = this.stockSubscriptions[stock];
+      for (const client of set) {
+        client.emit('message', { stock, value });
+      }
     });
   }
 
