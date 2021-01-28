@@ -28,8 +28,15 @@ export class StockService {
       console.log('Connected to socket server');
     });
 
+    this.socket.on('message', ({ stock, value }) => {
+      const subject = this.subjects[stock];
+      if (stock && subject) {
+        subject.next(value);
+      }
+    });
+
     this.socket.on('error', (err) => {
-      console.error(err);
+      console.log({err});
     });
   }
 

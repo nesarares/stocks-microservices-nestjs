@@ -26,6 +26,7 @@ export class StockChartComponent implements AfterViewInit, OnDestroy {
 
   chart: am4charts.XYChart;
   currentPrice: number;
+  lastPrice: number;
   data: { date: Date; value: number }[];
   chartId: string;
 
@@ -77,15 +78,17 @@ export class StockChartComponent implements AfterViewInit, OnDestroy {
       this.data = data;
       this.chart.data = data;
       this.currentPrice = data[data.length - 1]?.value ?? null;
+      this.lastPrice = this.currentPrice;
 
       const stockSubject = await this.stockService.subscribeToStock(this.stock);
       stockSubject
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe((currentPrice: number) => {
+          this.lastPrice = this.currentPrice;
           this.currentPrice = currentPrice;
-          this.data.shift();
-          this.data.push({ date: new Date(), value: currentPrice });
-          this.chart.data = data;
+          // this.data.shift();
+          // this.data.push({ date: new Date(), value: currentPrice });
+          // this.chart.data = data;
         });
     } catch (error) {
       console.error(error);

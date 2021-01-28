@@ -1,6 +1,8 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, map, throttleTime } from 'rxjs/operators';
 import { keys } from 'src/keys';
+import { RedisService } from 'src/redis/redis.service';
 import * as WebSocket from 'ws';
 
 const finnhubBaseUrl = 'https://finnhub.io/api/v1';
@@ -12,9 +14,17 @@ const finnhubHeaders = {
 export class StockService {
   ws: WebSocket;
   stockSubscriptions: { [key: string]: number } = {};
+  eventSubject = new Subject<{ channel: string; value: unknown }>();
 
-  constructor(private http: HttpService) {
+  constructor(private http: HttpService, private redisService: RedisService) {
     this.initFinnhubWs();
+
+    this.eventSubject
+      .asObservable()
+      .pipe(throttleTime(1000))
+      .subscribe(({ channel, value }) => {
+        this.redisService.publish(channel, value);
+      });
   }
 
   private async initFinnhubWs() {
@@ -27,12 +37,12 @@ export class StockService {
 
     ws.on('message', (data) => {
       const obj = JSON.parse(data.toString());
-      
+
       if (obj?.type === 'ping') {
         console.log('Received ping');
         ws.send(JSON.stringify({ type: 'pong' }));
       }
-      
+
       if (obj.data) {
         const dta = obj.data;
         const prices: { [key: string]: number } = {};
@@ -42,7 +52,11 @@ export class StockService {
             prices[symbol] = dta[i].p;
           }
         }
-        console.log(prices);
+
+        this.eventSubject.next({
+          channel: 'stocks',
+          value: prices
+        });
       }
     });
 
@@ -91,16 +105,16 @@ export class StockService {
 
     if (this.stockSubscriptions[stock] === 1) {
       this.ws.send(JSON.stringify({ type: 'subscribe', symbol: stock }));
-      console.log(`Sent subscribe for ${stock}`)
+      console.log(`Sent subscribe for ${stock}`);
     }
   }
-  
+
   public unsubscribeStock(stock: string) {
     if (this.stockSubscriptions[stock] == null) return;
     if (this.stockSubscriptions[stock] > 0) {
       this.stockSubscriptions[stock]--;
       this.ws.send(JSON.stringify({ type: 'unsubscribe', symbol: stock }));
-      console.log(`Sent unsubscribe for ${stock}`)
+      console.log(`Sent unsubscribe for ${stock}`);
     }
   }
 }
