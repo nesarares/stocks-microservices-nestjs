@@ -48,6 +48,7 @@ export class DashboardComponent implements OnInit {
 
   removeStock(stock: string) {
     this.selectedStocks = this.selectedStocks.filter((s) => s !== stock);
+    this.save();
   }
 
   save() {

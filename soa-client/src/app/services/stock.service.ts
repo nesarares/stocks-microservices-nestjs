@@ -23,7 +23,6 @@ export class StockService {
       transports: ['websocket'],
       query: { token },
     });
-    // this.socket.connect();
 
     this.socket.on('connect', () => {
       console.log('Connected to socket server');
