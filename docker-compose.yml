@@ -1,7 +1,40 @@
 version: '3'
 services:
-  redis:
-    image: 'redis:alpine'
-    restart: always
+  web:
+    build: './soa-client'
     ports:
-      - '6379:6379'
+      - 4200:80
+      - 80:80
+
+  api:
+    build: './soa-api'
+    ports:
+      - 8080:8080 # REST api
+      - 8079:8079 # Websocket
+    environment:
+      WS_PORT: 8079
+      PORT: 8080
+      AUTH_HOST: auth
+      AUTH_PORT: 8081
+      STOCKS_HOST: stocks
+      STOCKS_PORT: 8082
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  auth:
+    build: './soa-auth-microservice'
+    environment: 
+      AUTH_HOST: auth
+      AUTH_PORT: 8081
+
+  stocks:
+    build: './soa-stocks-microservice'
+    environment: 
+      STOCKS_HOST: stocks
+      STOCKS_PORT: 8082
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  redis:
+    image: redis:alpine
+    restart: always
