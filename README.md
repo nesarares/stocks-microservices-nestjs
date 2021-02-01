@@ -111,3 +111,48 @@ graph TD
 	StockService -. gets stock data from ..-> Finnhub(Finnhub System)
 	RedisService -. publishes stock data to .-> Redis(Redis message broker)
 ```
+
+## Sequence diagram (of get chart stock data)
+
+```mermaid
+sequenceDiagram
+	participant WA as WebApp
+	participant AG as ApiGateway
+	participant AM as AuthMicroservice
+	participant A as Auth0
+	participant SM as StocksMicroservice
+	participant F as Finnhub
+
+	WA ->> AG: Get AAPL data
+	activate AG
+
+	AG ->> AM: Authenticate request
+	activate AM
+
+	AM ->> A: Get public key
+	activate A
+	A ->> AM: Return public key
+	deactivate A
+
+	alt token is valid
+		AM ->> AG: Request is valid
+	else token is invalid
+		AM ->> AG: Request is invalid
+	end
+	deactivate AM
+
+	alt token is invalid
+		AG ->> WA: Return error
+	else token is valid
+		AG ->> SM: Get AAPL data
+		activate SM
+			SM ->> F: Get AAPL data
+			activate F
+				F ->> SM: Return AAPL data
+			deactivate F
+			SM ->> AG: Return AAPL data
+		deactivate SM
+		AG ->> WA: Return AAPL data
+	end
+	deactivate AG
+```
