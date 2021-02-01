@@ -84,4 +84,15 @@ graph TD
 
 ## Component diagram (of Auth Microservice)
 
+```mermaid
+graph TD
+	subgraph Auth Microservice
+		AppModule --> AuthModule
+		AuthModule --> AuthController & AuthService
+		AuthController -. uses .-> AuthService
+	end
+
+	AuthService -. verifies tokens using .-> Auth0(Auth0 System)
+```
+
 ## Component diagram (of Stocks Microservice)
