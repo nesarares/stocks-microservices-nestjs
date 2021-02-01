@@ -96,3 +96,18 @@ graph TD
 ```
 
 ## Component diagram (of Stocks Microservice)
+
+```mermaid
+graph TD
+	subgraph Stocks Microservice
+		AppModule --> StockModule & RedisModule
+		StockModule --> StockController & StockService
+		StockController -. uses .-> StockService
+		RedisModule ----> RedisService
+
+		StockService -. uses .-> RedisService
+	end
+
+	StockService -. gets stock data from ..-> Finnhub(Finnhub System)
+	RedisService -. publishes stock data to .-> Redis(Redis message broker)
+```
