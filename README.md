@@ -27,7 +27,7 @@ graph TD
 		Auth0(Auth0 system)
 
 		WebApp -. "[HTTP] Makes calls to" .-> API
-		WebApp -. "Uses" .-> Auth0
+		WebApp -. "Authenticates user" .-> Auth0
 		API -. "[TCP] Authenticates user requests" .-> Auth
 		API -. "[TCP] Requests stock data" .-> Stocks
 		API -. "[WebSocket] Sends real-time stock prices" .-> WebApp
@@ -65,6 +65,22 @@ graph TD
 		StockService -. "Makes calls to" .-> Api("Api Gateway")
 ```
 ## Component diagram (of Api Gateway)
+
+```mermaid
+graph TD
+	subgraph Api Gateway
+		AppModule --> SharedModule & StocksModule & RedisModule
+		SharedModule ---> AuthGuard & WsAuthGuard
+		RedisModule ---> RedisService
+		StocksModule --> StocksController & StocksGateway
+		StocksGateway -. uses .-> RedisService & WsAuthGuard
+		StocksController -. uses .-> AuthGuard
+	end
+
+	AuthGuard & WsAuthGuard -. Makes calls to .-> AuthMicroservice(Authentication Microservice)
+	RedisService -. Subscribes to messages from .-> Redis(Redis message broker)
+	StocksController & StocksGateway -. Makes calls to ..-> StocksMicroservice(Stocks Microservice)
+```
 
 ## Component diagram (of Auth Microservice)
 
